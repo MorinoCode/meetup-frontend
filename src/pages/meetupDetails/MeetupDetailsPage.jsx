@@ -1,3 +1,4 @@
+// src/pages/meetupDetails/MeetupDetailsPage.jsx
 import "./MeetupDetailsPage.css";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -8,9 +9,16 @@ export default function MeetupDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [joined, setJoined] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [userReviewId, setUserReviewId] = useState(null); // track user's review
 
   useEffect(() => {
     fetchMeetupDetails();
+    fetchReviews();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   async function fetchMeetupDetails() {
@@ -28,7 +36,6 @@ export default function MeetupDetailsPage() {
       const data = await res.json();
       setMeetup(data);
 
-      // check if user is already attending
       const userId = localStorage.getItem("userId");
       if (data.attendees?.some((a) => String(a.user_id) === userId)) {
         setJoined(true);
@@ -41,36 +48,107 @@ export default function MeetupDetailsPage() {
     }
   }
 
-  async function handleAttend() {
-    const token = localStorage.getItem("token");
+  async function fetchReviews() {
     try {
+      const token = localStorage.getItem("token");
       const res = await fetch(
-        `https://meetup-backend-my4m.onrender.com/meetups/${id}/attend`,
+        `https://meetup-backend-my4m.onrender.com/meetups/${id}/review`,
         {
-          method: joined ? "DELETE" : "POST",
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      if (res.ok) {
+        const data = await res.json();
+        setReviews(data);
 
-      if (!res.ok) throw new Error("Failed to update attendance");
-
-      if (joined) {
-        alert("❎ You have unregistered from this meetup.");
-      } else {
-        alert("✅ You have joined this meetup!");
+        // check if user already has a review
+        const userId = localStorage.getItem("userId");
+        const existing = data.find(
+          (r) => String(r.reviewer_username) === localStorage.getItem("username")
+        );
+        if (existing) {
+          setUserReviewId(existing.id);
+          setRating(existing.rating);
+          setComment(existing.comment);
+        }
       }
-
-      setJoined(!joined);
-      fetchMeetupDetails(); // refresh attendee count
     } catch (err) {
-      console.error("Attend error:", err);
-      alert("Something went wrong. Please try again.");
+      console.error("Error loading reviews:", err);
+    }
+  }
+
+  async function handleAttend() {
+  const token = localStorage.getItem("token");
+  try {
+    const res = await fetch(
+      `https://meetup-backend-my4m.onrender.com/meetups/${id}/attend`,
+      {
+        method: joined ? "DELETE" : "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      if (data.message === "This meetup is full.") {
+        alert("❌ This meetup is full, you cannot join.");
+      } else {
+        alert("❌ Could not sign up. Please try again.");
+      }
+      return;
+    }
+
+    alert(joined ? "❎ You have unregistered." : "✅ You have joined this meetup!");
+    setJoined(!joined);
+    fetchMeetupDetails();
+  } catch (err) {
+    console.error("Attend error:", err);
+  }
+}
+
+
+  async function handleSubmitReview(e) {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("token");
+      const body = JSON.stringify({ rating, comment });
+
+      const res = await fetch(
+        `https://meetup-backend-my4m.onrender.com/meetups/${id}/review`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body,
+        }
+      );
+
+      if (res.ok) {
+        alert(userReviewId ? "✅ Review updated!" : "✅ Review submitted!");
+        setShowReviewForm(false);
+        fetchReviews();
+      } else {
+        alert("❌ Failed to submit review.");
+      }
+    } catch (err) {
+      console.error("Review submit error:", err);
     }
   }
 
   if (loading) return <p className="loading">Loading meetup details...</p>;
   if (error) return <p className="error">{error}</p>;
   if (!meetup) return null;
+
+  const meetupDate = new Date(meetup.date);
+  const now = new Date();
+  const canReview = joined && meetupDate < now; // only past meetups you attended
+
+  const userHasReview = reviews.some(
+    (r) => r.reviewer_username === localStorage.getItem("username")
+  );
 
   return (
     <div className="meetup-details">
@@ -100,6 +178,67 @@ export default function MeetupDetailsPage() {
       >
         {joined ? "❎ Unregister" : "Join Meetup"}
       </button>
+
+      {/* ⭐ Reviews Section */}
+      <div className="reviews-section">
+        <h2>Reviews</h2>
+        {reviews.length > 0 ? (
+          reviews.map((r) => (
+            <div key={r.id} className="review-card">
+              <p>
+                <strong>{r.reviewer_username}</strong> rated ⭐ {r.rating}/5
+              </p>
+              <p>{r.comment}</p>
+            </div>
+          ))
+        ) : (
+          <p>No reviews yet.</p>
+        )}
+      </div>
+
+      {canReview && (
+        <div className="review-form-container">
+          {!showReviewForm ? (
+            <button onClick={() => setShowReviewForm(true)} className="review-btn">
+              {userHasReview ? "✏️ Edit Review" : "⭐ Rate & Review"}
+            </button>
+          ) : (
+            <form onSubmit={handleSubmitReview} className="review-form">
+              <label>
+                Rating:
+                <select
+                  value={rating}
+                  onChange={(e) => setRating(Number(e.target.value))}
+                >
+                  <option value="0">Select</option>
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </select>
+              </label>
+
+              <textarea
+                placeholder="Write your review..."
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+              />
+
+              <div className="review-buttons">
+                <button type="submit">
+                  {userHasReview ? "Update Review" : "Submit Review"}
+                </button>
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={() => setShowReviewForm(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      )}
     </div>
   );
 }

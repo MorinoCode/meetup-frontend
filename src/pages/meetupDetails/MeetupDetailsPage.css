@@ -63,3 +63,78 @@
 .unregister-btn:hover {
   background: #dc2626;
 }
+.reviews-section {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.review-card {
+  background: #f9fafb;
+  padding: 1rem;
+  margin-top: 0.8rem;
+  border-radius: 8px;
+}
+
+.review-card p {
+  margin: 0.3rem 0;
+}
+
+.review-form-container {
+  margin-top: 2rem;
+}
+
+.review-btn {
+  background: #facc15;
+  border: none;
+  color: #111;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.review-form select,
+.review-form textarea {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.review-form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.review-form button {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.review-form button:hover {
+  background: #2563eb;
+}
+.review-buttons {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.cancel-btn {
+  background: #9ca3af;
+}
+
+.cancel-btn:hover {
+  background: #6b7280;
+}
