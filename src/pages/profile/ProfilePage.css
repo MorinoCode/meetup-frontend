@@ -1,0 +1,86 @@
+/* src/pages/profile/ProfilePage.css */
+
+.profile-container {
+  min-height: 85vh;
+  background: #f9fafb;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-header {
+  background: white;
+  padding: 1.5rem 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 700px;
+}
+
+.user-info p {
+  margin: 0.3rem 0;
+  color: #374151;
+}
+
+.meetup-history {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  width: 100%;
+  max-width: 900px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.meetup-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.meetup-card {
+  background: #f3f4f6;
+  border-radius: 1rem;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s;
+}
+
+.meetup-card:hover {
+  transform: translateY(-3px);
+}
+
+.meetup-card button {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.meetup-card button:hover {
+  background: #2563eb;
+}
+
+.comment {
+  font-style: italic;
+  color: #4b5563;
+  margin: 0.5rem 0;
+}
+
+.loading,
+.error {
+  text-align: center;
+  font-size: 1.1rem;
+  margin-top: 2rem;
+}
+
+.error {
+  color: #dc2626;
+}
