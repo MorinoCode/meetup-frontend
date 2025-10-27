@@ -8,7 +8,7 @@ export default function MeetupsPage() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [joinedMeetups, setJoinedMeetups] = useState([]); // ✅ new state
+  const [joinedMeetups, setJoinedMeetups] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,22 +44,31 @@ export default function MeetupsPage() {
   }
 
   async function handleAttend(meetupId) {
+    const token = localStorage.getItem("token");
+    const isJoined = joinedMeetups.includes(meetupId);
+
     try {
-      const token = localStorage.getItem("token");
       const res = await fetch(
         `https://meetup-backend-my4m.onrender.com/meetups/${meetupId}/attend`,
-        { method: "POST", headers: { Authorization: `Bearer ${token}` } }
+        {
+          method: isJoined ? "DELETE" : "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
-      if (res.ok) {
-        alert("✅ You have signed up for this meetup!");
-        // ✅ mark this meetup as joined
-        setJoinedMeetups((prev) => [...prev, meetupId]);
+      if (!res.ok) throw new Error("Request failed");
+
+      if (isJoined) {
+        // unregistered
+        alert("❎ You have unregistered from this meetup.");
+        setJoinedMeetups((prev) => prev.filter((id) => id !== meetupId));
       } else {
-        alert("❌ Could not sign up. Please try again.");
+        // registered
+        alert("✅ You have joined this meetup!");
+        setJoinedMeetups((prev) => [...prev, meetupId]);
       }
     } catch (err) {
-      console.error("Attend error:", err);
+      console.error("Attend/unregister error:", err);
       alert("Something went wrong.");
     }
   }
@@ -96,8 +105,11 @@ export default function MeetupsPage() {
               </button>
 
               {joinedMeetups.includes(m.id) ? (
-                <button className="joined-btn" disabled>
-                  ✅ Joined
+                <button
+                  className="joined-btn unregister"
+                  onClick={() => handleAttend(m.id)}
+                >
+                  ❎ Unregister
                 </button>
               ) : (
                 <button onClick={() => handleAttend(m.id)}>Join</button>
