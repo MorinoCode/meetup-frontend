@@ -78,31 +78,35 @@ export default function MeetupDetailsPage() {
   }
 
   async function handleAttend() {
-    const token = localStorage.getItem("token");
-    try {
-      const res = await fetch(
-        `https://meetup-backend-my4m.onrender.com/meetups/${id}/attend`,
-        {
-          method: joined ? "DELETE" : "POST",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (!res.ok) throw new Error("Failed to update attendance");
-
-      if (joined) {
-        alert("❎ You have unregistered from this meetup.");
-      } else {
-        alert("✅ You have joined this meetup!");
+  const token = localStorage.getItem("token");
+  try {
+    const res = await fetch(
+      `https://meetup-backend-my4m.onrender.com/meetups/${id}/attend`,
+      {
+        method: joined ? "DELETE" : "POST",
+        headers: { Authorization: `Bearer ${token}` },
       }
+    );
 
-      setJoined(!joined);
-      fetchMeetupDetails();
-    } catch (err) {
-      console.error("Attend error:", err);
-      alert("Something went wrong. Please try again.");
+    const data = await res.json();
+
+    if (!res.ok) {
+      if (data.message === "This meetup is full.") {
+        alert("❌ This meetup is full, you cannot join.");
+      } else {
+        alert("❌ Could not sign up. Please try again.");
+      }
+      return;
     }
+
+    alert(joined ? "❎ You have unregistered." : "✅ You have joined this meetup!");
+    setJoined(!joined);
+    fetchMeetupDetails();
+  } catch (err) {
+    console.error("Attend error:", err);
   }
+}
+
 
   async function handleSubmitReview(e) {
     e.preventDefault();
