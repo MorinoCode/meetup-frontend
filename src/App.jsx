@@ -1,13 +1,39 @@
+import "./App.css";
 
-import './App.css'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+
+// import pages and components
+import Navbar from "./component/navbar/Navbar";
+import Signup from "./pages/signup/Signup";
+import Footer from "./component/footer/Footer";
 
 function App() {
+  function PrivateRoute({ children }) {
+    const token = localStorage.getItem("token");
+    return token ? children : <Navigate to="/signup" />;
+  }
 
   return (
     <>
-      <h1>meetup</h1>
+      <Router>
+
+        <Navbar />
+
+        <Routes>
+          <Route path="/signup" element={<Signup />} />
+
+          
+        </Routes>
+
+        <Footer />
+      </Router>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
