@@ -11,6 +11,7 @@ import {
 import Navbar from "./component/navbar/Navbar";
 import Signup from "./pages/signup/Signup";
 import Footer from "./component/footer/Footer";
+import Login from "./pages/login/Login";
 
 function App() {
   function PrivateRoute({ children }) {
@@ -21,13 +22,11 @@ function App() {
   return (
     <>
       <Router>
-
         <Navbar />
 
         <Routes>
           <Route path="/signup" element={<Signup />} />
-
-          
+          <Route path="/login" element={<Login />} />
         </Routes>
 
         <Footer />
