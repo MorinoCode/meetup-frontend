@@ -1,12 +1,14 @@
-.signup-container {
+/* src/pages/login/Login.css */
+
+.login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  height:100vh;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  min-height: 90vh;
+  background: linear-gradient(135deg, #10b981, #059669);
 }
 
-.signup-card {
+.login-card {
   background: #fff;
   padding: 2rem;
   border-radius: 1rem;
@@ -17,27 +19,27 @@
   gap: 1rem;
 }
 
-.signup-card h2 {
+.login-card h2 {
   text-align: center;
   margin-bottom: 1rem;
   color: #111827;
 }
 
-.signup-card input {
+.login-card input {
   padding: 0.8rem;
   border-radius: 8px;
   border: 1px solid #d1d5db;
   font-size: 1rem;
 }
 
-.signup-card input:focus {
+.login-card input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
 }
 
-.signup-card button {
-  background: #3b82f6;
+.login-card button {
+  background: #10b981;
   color: white;
   border: none;
   border-radius: 8px;
@@ -47,11 +49,11 @@
   transition: background 0.3s;
 }
 
-.signup-card button:hover {
-  background: #2563eb;
+.login-card button:hover {
+  background: #059669;
 }
 
-.signup-message {
+.login-message {
   text-align: center;
   font-size: 0.9rem;
   color: #1f2937;
