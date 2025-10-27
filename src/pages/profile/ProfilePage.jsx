@@ -17,9 +17,7 @@ export default function ProfilePage() {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch("https://meetup-backend-my4m.onrender.com/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (!res.ok) throw new Error("Failed to load profile");
@@ -34,8 +32,34 @@ export default function ProfilePage() {
     }
   }
 
+  async function handleUnregister(meetupId) {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `https://meetup-backend-my4m.onrender.com/meetups/${meetupId}/attend`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (res.ok) {
+        alert("You have unregistered from this meetup.");
+        fetchProfile(); // refresh profile data
+      } else {
+        alert("Failed to unregister. Try again.");
+      }
+    } catch (err) {
+      console.error("Unregister error:", err);
+    }
+  }
+
   if (loading) return <p className="loading">Loading profile...</p>;
   if (error) return <p className="error">{error}</p>;
+
+  const today = new Date();
+  const upcoming = profile.history.filter((m) => new Date(m.date) >= today);
+  const past = profile.history.filter((m) => new Date(m.date) < today);
 
   return (
     <div className="profile-container">
@@ -44,28 +68,43 @@ export default function ProfilePage() {
         <div className="user-info">
           <p><strong>Username:</strong> {profile.username}</p>
           <p><strong>Email:</strong> {profile.email}</p>
-          <p><strong>Joined:</strong> {new Date(profile.created_at).toLocaleDateString()}</p>
         </div>
       </div>
 
       <div className="meetup-history">
-        <h2>My Meetups</h2>
-        {profile.history && profile.history.length > 0 ? (
+        <h2>Upcoming Meetups</h2>
+        {upcoming.length > 0 ? (
           <div className="meetup-list">
-            {profile.history.map((m) => (
+            {upcoming.map((m) => (
               <div key={m.meetup_id} className="meetup-card">
                 <h3>{m.title}</h3>
                 <p>📅 {m.date}</p>
-                {m.rating && <p>⭐ {m.rating}/5</p>}
-                {m.comment && <p className="comment">💬 "{m.comment}"</p>}
-                <button onClick={() => navigate(`/meetup/${m.meetup_id}`)}>
-                  View Details
+                <button onClick={() => handleUnregister(m.meetup_id)}>
+                  ❎ Unregister
                 </button>
               </div>
             ))}
           </div>
         ) : (
-          <p>You haven't joined any meetups yet.</p>
+          <p>No upcoming meetups.</p>
+        )}
+      </div>
+
+      <div className="meetup-history">
+        <h2>Past Meetups</h2>
+        {past.length > 0 ? (
+          <div className="meetup-list">
+            {past.map((m) => (
+              <div key={m.meetup_id} className="meetup-card">
+                <h3>{m.title}</h3>
+                <p>📅 {m.date}</p>
+                {m.rating && <p>⭐ {m.rating}/5</p>}
+                {m.comment && <p className="comment">💬 "{m.comment}"</p>}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>No past meetups yet.</p>
         )}
       </div>
     </div>
