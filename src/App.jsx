@@ -1,11 +1,6 @@
 import "./App.css";
 
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 // import pages and components
 import Navbar from "./component/navbar/Navbar";
@@ -26,21 +21,49 @@ function App() {
 
   return (
     <>
-      <Router>
-        <Navbar />
+      <Navbar />
 
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/allmeetup" element={<PrivateRoute><MeetupsPage /></PrivateRoute> }/>
-          <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute> }/>
-          <Route path="/meetup/:id" element={<PrivateRoute> <MeetupDetailsPage /></PrivateRoute> }/>
-          <Route path="/create-meetup" element={<PrivateRoute>  <CreateMeetupPage /></PrivateRoute> }/>
-        </Routes>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/allmeetup"
+          element={
+            <PrivateRoute>
+              <MeetupsPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <ProfilePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/meetup/:id"
+          element={
+            <PrivateRoute>
+              {" "}
+              <MeetupDetailsPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/create-meetup"
+          element={
+            <PrivateRoute>
+              {" "}
+              <CreateMeetupPage />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
 
-        <Footer />
-      </Router>
+      <Footer />
     </>
   );
 }
