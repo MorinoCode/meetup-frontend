@@ -59,12 +59,10 @@ meetup-frontend/
 │   │
 │   ├── App.jsx             # Routing och PrivateRoute
 │   ├── main.jsx            # React root + BrowserRouter
-│   ├── config.js           # Backend-URL (Render)
+│   
 │   └── index.css           # Global styling
 │
-├── .github/
-│   └── workflows/
-│       └── frontend.yml    # GitHub Actions (deployment till S3)
+├
 │
 ├── package.json
 ├── vite.config.js
