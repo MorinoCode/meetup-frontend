@@ -1,13 +1,30 @@
+import "./App.css";
 
-import './App.css'
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 function App() {
+  
+  function PrivateRoute({ children }) {
+    const token = localStorage.getItem("token");
+    return token ? children : <Navigate to="/signup" />;
+  }
 
   return (
     <>
-      <h1>meetup</h1>
+      <Router>
+        
+
+        <Routes>
+
+        </Routes>
+      </Router>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
