@@ -16,7 +16,7 @@ export default function HomePage() {
 
         <div className="home-buttons">
           <button onClick={() => navigate("/signup")}>Get Started</button>
-          <button onClick={() => navigate("/allmeetup")}>Explore Meetups</button>
+          <button onClick={() => navigate("/login")}>Log in</button>
         </div>
       </div>
 
