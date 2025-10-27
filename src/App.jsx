@@ -15,6 +15,7 @@ import Login from "./pages/login/Login";
 import MeetupsPage from "./pages/meetups/MeetupsPage";
 import ProfilePage from "./pages/profile/ProfilePage";
 import MeetupDetailsPage from "./pages/meetupDetails/MeetupDetailsPage";
+import CreateMeetupPage from "./pages/createmeetup/CreateMeetupPage";
 import Footer from "./component/footer/Footer";
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
           <Route path="/allmeetup" element={<PrivateRoute><MeetupsPage /></PrivateRoute> }/>
           <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute> }/>
           <Route path="/meetup/:id" element={<PrivateRoute> <MeetupDetailsPage /></PrivateRoute> }/>
+          <Route path="/create-meetup" element={<PrivateRoute>  <CreateMeetupPage /></PrivateRoute> }/>
         </Routes>
 
         <Footer />
