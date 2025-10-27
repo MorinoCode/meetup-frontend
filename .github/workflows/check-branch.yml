@@ -1,0 +1,19 @@
+name: Branch Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  verify-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR source
+        run: |
+          echo "Base: ${{ github.base_ref }}, Head: ${{ github.head_ref }}"
+          if [[ "${{ github.base_ref }}" == "main" && "${{ github.head_ref }}" != "dev" ]]; then
+            echo "❌ Only merges from dev → main are allowed."
+            exit 1
+          else
+            echo "✅ Branch flow allowed: ${{ github.head_ref }} → ${{ github.base_ref }}"
+          fi
