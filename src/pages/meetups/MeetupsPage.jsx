@@ -6,22 +6,31 @@ import { useNavigate } from "react-router-dom";
 export default function MeetupsPage() {
   const [meetups, setMeetups] = useState([]);
   const [search, setSearch] = useState("");
+  const [dateFilter, setDateFilter] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [joinedMeetups, setJoinedMeetups] = useState([]); // ✅ new state
+  const [joinedMeetups, setJoinedMeetups] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchMeetups();
   }, []);
 
-  async function fetchMeetups(query = "") {
+  async function fetchMeetups() {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      const url = query
-        ? `https://meetup-backend-my4m.onrender.com/meetups?search=${encodeURIComponent(query)}`
-        : `https://meetup-backend-my4m.onrender.com/meetups`;
+
+      // build query string dynamically
+      const params = new URLSearchParams();
+      if (search) params.append("search", search);
+      if (dateFilter) params.append("dateFilter", dateFilter);
+      if (dateFrom) params.append("dateFrom", dateFrom);
+      if (dateTo) params.append("dateTo", dateTo);
+
+      const url = `https://meetup-backend-my4m.onrender.com/meetups?${params.toString()}`;
 
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
@@ -38,28 +47,35 @@ export default function MeetupsPage() {
     }
   }
 
-  function handleSearch(e) {
+  function handleFilterSubmit(e) {
     e.preventDefault();
-    fetchMeetups(search);
+    fetchMeetups();
   }
 
   async function handleAttend(meetupId) {
+    const token = localStorage.getItem("token");
+    const isJoined = joinedMeetups.includes(meetupId);
+
     try {
-      const token = localStorage.getItem("token");
       const res = await fetch(
         `https://meetup-backend-my4m.onrender.com/meetups/${meetupId}/attend`,
-        { method: "POST", headers: { Authorization: `Bearer ${token}` } }
+        {
+          method: isJoined ? "DELETE" : "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
-      if (res.ok) {
-        alert("✅ You have signed up for this meetup!");
-        // ✅ mark this meetup as joined
-        setJoinedMeetups((prev) => [...prev, meetupId]);
+      if (!res.ok) throw new Error("Request failed");
+
+      if (isJoined) {
+        alert("❎ You have unregistered from this meetup.");
+        setJoinedMeetups((prev) => prev.filter((id) => id !== meetupId));
       } else {
-        alert("❌ Could not sign up. Please try again.");
+        alert("✅ You have joined this meetup!");
+        setJoinedMeetups((prev) => [...prev, meetupId]);
       }
     } catch (err) {
-      console.error("Attend error:", err);
+      console.error("Attend/unregister error:", err);
       alert("Something went wrong.");
     }
   }
@@ -68,14 +84,37 @@ export default function MeetupsPage() {
     <div className="meetups-page">
       <h1>All Meetups</h1>
 
-      <form onSubmit={handleSearch} className="search-bar">
+      {/* 🔍 Search & Filters */}
+      <form onSubmit={handleFilterSubmit} className="filter-bar">
         <input
           type="text"
-          placeholder="Search meetups by title..."
+          placeholder="Search meetups..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button type="submit">Search</button>
+
+        <select
+          value={dateFilter}
+          onChange={(e) => setDateFilter(e.target.value)}
+        >
+          <option value="">All Dates</option>
+          <option value="upcoming">Upcoming</option>
+          <option value="past">Past</option>
+        </select>
+
+        <input
+          type="date"
+          value={dateFrom}
+          onChange={(e) => setDateFrom(e.target.value)}
+        />
+
+        <input
+          type="date"
+          value={dateTo}
+          onChange={(e) => setDateTo(e.target.value)}
+        />
+
+        <button type="submit">Apply Filters</button>
       </form>
 
       {loading && <p>Loading meetups...</p>}
@@ -96,8 +135,11 @@ export default function MeetupsPage() {
               </button>
 
               {joinedMeetups.includes(m.id) ? (
-                <button className="joined-btn" disabled>
-                  ✅ Joined
+                <button
+                  className="joined-btn unregister"
+                  onClick={() => handleAttend(m.id)}
+                >
+                  ❎ Unregister
                 </button>
               ) : (
                 <button onClick={() => handleAttend(m.id)}>Join</button>
