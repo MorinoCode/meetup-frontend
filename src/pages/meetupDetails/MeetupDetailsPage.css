@@ -1,0 +1,65 @@
+.meetup-details {
+  max-width: 700px;
+  margin: 2rem auto;
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.meetup-details h1 {
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
+.info {
+  color: #4b5563;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.description {
+  margin: 1rem 0;
+  line-height: 1.5;
+  color: #374151;
+}
+
+.attendees {
+  margin-top: 1rem;
+  background: #f9fafb;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.attendees ul {
+  list-style: none;
+  margin-top: 0.5rem;
+  padding: 0;
+}
+
+.join-btn,
+.unregister-btn {
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+}
+
+.join-btn {
+  background: #3b82f6;
+}
+
+.join-btn:hover {
+  background: #2563eb;
+}
+
+.unregister-btn {
+  background: #ef4444;
+}
+
+.unregister-btn:hover {
+  background: #dc2626;
+}
