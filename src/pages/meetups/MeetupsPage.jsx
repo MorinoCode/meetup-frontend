@@ -8,6 +8,7 @@ export default function MeetupsPage() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [joinedMeetups, setJoinedMeetups] = useState([]); // ✅ new state
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,8 +50,14 @@ export default function MeetupsPage() {
         `https://meetup-backend-my4m.onrender.com/meetups/${meetupId}/attend`,
         { method: "POST", headers: { Authorization: `Bearer ${token}` } }
       );
-      if (res.ok) alert("✅ You have signed up for this meetup!");
-      else alert("❌ Could not sign up. Please try again.");
+
+      if (res.ok) {
+        alert("✅ You have signed up for this meetup!");
+        // ✅ mark this meetup as joined
+        setJoinedMeetups((prev) => [...prev, meetupId]);
+      } else {
+        alert("❌ Could not sign up. Please try again.");
+      }
     } catch (err) {
       console.error("Attend error:", err);
       alert("Something went wrong.");
@@ -84,8 +91,17 @@ export default function MeetupsPage() {
             </p>
 
             <div className="buttons">
-              <button onClick={() => navigate(`/meetup/${m.id}`)}>Read More</button>
-              <button onClick={() => handleAttend(m.id)}>Join</button>
+              <button onClick={() => navigate(`/meetup/${m.id}`)}>
+                Read More
+              </button>
+
+              {joinedMeetups.includes(m.id) ? (
+                <button className="joined-btn" disabled>
+                  ✅ Joined
+                </button>
+              ) : (
+                <button onClick={() => handleAttend(m.id)}>Join</button>
+              )}
             </div>
           </div>
         ))}
