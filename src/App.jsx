@@ -7,9 +7,10 @@ import {
   Navigate,
 } from "react-router-dom";
 
-// import pages
+// import pages and components
 import Navbar from "./component/navbar/Navbar";
 import Signup from "./pages/signup/Signup";
+import Footer from "./component/footer/Footer";
 
 function App() {
   function PrivateRoute({ children }) {
@@ -28,6 +29,8 @@ function App() {
 
           
         </Routes>
+
+        <Footer />
       </Router>
     </>
   );
