@@ -12,6 +12,7 @@ import Navbar from "./component/navbar/Navbar";
 import HomePage from "./pages/home/HomePage";
 import Signup from "./pages/signup/Signup";
 import Login from "./pages/login/Login";
+import MeetupsPage from "./pages/meetups/MeetupsPage";
 import Footer from "./component/footer/Footer";
 
 function App() {
