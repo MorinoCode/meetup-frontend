@@ -97,3 +97,13 @@ h1 {
   color: #dc2626;
   text-align: center;
 }
+/* Add in MeetupsPage.css */
+.joined-btn {
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 0.8rem;
+  cursor: not-allowed;
+  opacity: 0.9;
+}
