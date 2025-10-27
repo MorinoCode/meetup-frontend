@@ -1,16 +1,69 @@
-# React + Vite
+# Meetup Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+En fullstack-applikation byggd i **React (Vite)** som låter användare **registrera sig, logga in, skapa, delta i och recensera meetups**.  
+Frontend är byggd i React och driftsatt på **AWS S3**, medan backend körs i **Render** som en Docker-container.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Funktionalitet
 
-## React Compiler
+### 👥 Användarflöde
+- **Signup & Login** med JWT-autentisering  
+- **Protected routes** (endast åtkomst för inloggade användare)
+- **Skapa, visa, delta i, och avregistrera sig från meetups**
+- **Filtrera & söka** bland meetups
+- **Se profil med historik och kommande meetups**
+- **Betygsätt & recensera** tidigare meetups
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 📅 Meetups-funktioner
+- Visa **alla meetups** med titel, plats, datum, tid och värd
+- Filtrera meetups efter **datumintervall** eller **uppkommande/tidigare**
+- Skapa egna meetups (med titel, beskrivning, plats, tid och datum)
+- Möjlighet att anmäla sig eller avregistrera sig
+- Recensioner och betyg visas på varje meetup-sida
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🏗️ Teknisk översikt
+
+| Teknologi | Användning |
+|------------|-------------|
+| **React (Vite)** | UI och routing |
+| **React Router DOM** | Navigering och privata routes |
+| **CSS / Tailwind-liknande styling** | Komponentdesign |
+| **Render** | Backend-hosting (Express + Postgres) |
+| **AWS S3** | Frontend-hosting |
+| **GitHub Actions** | CI/CD-pipeline för automatisk deployment |
+| **JWT** | Autentisering & skyddade routes |
+
+---
+
+## 🧠 Projektstruktur
+
+```bash
+meetup-frontend/
+│
+├── src/
+│   ├── component/
+│   │   ├── navbar/         # Navbar-komponent
+│   │   └── footer/         # Footer-komponent
+│   │
+│   ├── pages/
+│   │   ├── home/           # Startsida
+│   │   ├── signup/         # Registrering
+│   │   ├── login/          # Inloggning
+│   │   ├── meetups/        # Alla meetups + filter/sök
+│   │   ├── meetupDetails/  # Detaljerad meetup-sida
+│   │   ├── profile/        # Profil & historik
+│   │   └── createmeetup/   # Skapa meetup
+│   │
+│   ├── App.jsx             # Routing och PrivateRoute
+│   ├── main.jsx            # React root + BrowserRouter
+│   
+│   └── index.css           # Global styling
+│
+├
+│
+├── package.json
+├── vite.config.js
+└── README.md
