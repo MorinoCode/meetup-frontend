@@ -27,6 +27,7 @@ function App() {
         <Routes>
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/allmeetup" element={<PrivateRoute><MeetupsPage /></PrivateRoute> }/>
         </Routes>
 
         <Footer />
