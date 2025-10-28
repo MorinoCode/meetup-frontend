@@ -15,7 +15,7 @@ export default function MeetupsPage() {
 
   useEffect(() => {
     fetchMeetups();
-    fetchJoinedMeetups(); // 👈 kolla användarens anmälda meetups
+    fetchJoinedMeetups();
   }, []);
 
   async function fetchMeetups() {
@@ -35,6 +35,7 @@ export default function MeetupsPage() {
       });
 
       if (!res.ok) throw new Error("Failed to fetch meetups");
+
       const data = await res.json();
       setMeetups(data);
     } catch (err) {
@@ -45,7 +46,6 @@ export default function MeetupsPage() {
     }
   }
 
-  // 👇 Hämta användarens anmälda meetups
   async function fetchJoinedMeetups() {
     try {
       const token = localStorage.getItem("token");
@@ -81,14 +81,40 @@ export default function MeetupsPage() {
         }
       );
 
-      if (!res.ok) throw new Error("Request failed");
+      const data = await res.json();
+      if (!res.ok) {
+        if (data.message?.includes("full")) {
+          alert("❌ This meetup is full!");
+        } else {
+          alert("❌ Something went wrong.");
+        }
+        return;
+      }
 
       if (isJoined) {
         alert("❎ You have unregistered from this meetup.");
         setJoinedMeetups((prev) => prev.filter((id) => id !== meetupId));
+
+        // uppdatera antal deltagare lokalt (öka +1)
+        setMeetups((prev) =>
+          prev.map((m) =>
+            m.id === meetupId
+              ? { ...m, attendees_count: m.attendees_count - 1 }
+              : m
+          )
+        );
       } else {
         alert("✅ You have joined this meetup!");
         setJoinedMeetups((prev) => [...prev, meetupId]);
+
+        // uppdatera antal deltagare lokalt (minska -1)
+        setMeetups((prev) =>
+          prev.map((m) =>
+            m.id === meetupId
+              ? { ...m, attendees_count: m.attendees_count + 1 }
+              : m
+          )
+        );
       }
     } catch (err) {
       console.error("Attend/unregister error:", err);
@@ -109,7 +135,10 @@ export default function MeetupsPage() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <select value={dateFilter} onChange={(e) => setDateFilter(e.target.value)}>
+        <select
+          value={dateFilter}
+          onChange={(e) => setDateFilter(e.target.value)}
+        >
           <option value="">All Dates</option>
           <option value="upcoming">Upcoming</option>
           <option value="past">Past</option>
@@ -125,6 +154,7 @@ export default function MeetupsPage() {
           value={dateTo}
           onChange={(e) => setDateTo(e.target.value)}
         />
+
         <button type="submit">Apply Filters</button>
       </form>
 
@@ -137,9 +167,9 @@ export default function MeetupsPage() {
 
       <div className="meetup-list">
         {meetups.map((m) => {
-          const meetupDate = new Date(m.date);
-          const hasPassed = meetupDate < new Date();
+          const spotsLeft = m.capacity - m.attendees_count;
           const isJoined = joinedMeetups.includes(m.id);
+          const isFull = spotsLeft <= 0;
 
           return (
             <div key={m.id} className="meetup-card">
@@ -149,28 +179,31 @@ export default function MeetupsPage() {
                 {m.date.split("T")[0]} — {m.time.slice(0, 5)}
               </p>
 
-              <div className="buttons">
-                <button onClick={() => navigate(`/meetup/${m.id}`)}>Read More</button>
+              {/* 🪑 Visa platser */}
+              <p className={`spots ${isFull ? "full" : ""}`}>
+                {isFull ? "❌ Full" : `🪑 ${spotsLeft} spots left`}
+              </p>
 
-                {/* 🧠 Logik för knapp */}
+              <div className="buttons">
+                <button onClick={() => navigate(`/meetup/${m.id}`)}>
+                  Read More
+                </button>
+
                 {isJoined ? (
-                  hasPassed ? (
-                    <button
-                      className="review-btn"
-                      onClick={() => navigate(`/meetup/${m.id}`)}
-                    >
-                      ⭐ Rate & Review
-                    </button>
-                  ) : (
-                    <button
-                      className="joined-btn unregister"
-                      onClick={() => handleAttend(m.id)}
-                    >
-                      ❎ Unregister
-                    </button>
-                  )
+                  <button
+                    className="joined-btn unregister"
+                    onClick={() => handleAttend(m.id)}
+                  >
+                    ❎ Unregister
+                  </button>
                 ) : (
-                  <button onClick={() => handleAttend(m.id)}>Join</button>
+                  <button
+                    disabled={isFull}
+                    onClick={() => handleAttend(m.id)}
+                    className={isFull ? "disabled" : ""}
+                  >
+                    {isFull ? "Full" : "Join"}
+                  </button>
                 )}
               </div>
             </div>
