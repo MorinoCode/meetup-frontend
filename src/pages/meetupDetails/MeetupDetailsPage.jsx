@@ -155,7 +155,7 @@ export default function MeetupDetailsPage() {
       <h1>{meetup.title}</h1>
       <p className="info">
         📍 {meetup.location} <br />
-        🗓️ {meetup.date} at {meetup.time}
+        🗓️ {meetup.date.split("T")[0]} at {meetup.time.slice(0, 5)}
       </p>
       <p className="description">{meetup.description}</p>
 

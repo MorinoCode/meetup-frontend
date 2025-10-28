@@ -19,33 +19,42 @@ export default function MeetupsPage() {
   }, []);
 
   async function fetchMeetups() {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
+  try {
+    setLoading(true);
+    const token = localStorage.getItem("token");
 
-      // build query string dynamically
-      const params = new URLSearchParams();
-      if (search) params.append("search", search);
-      if (dateFilter) params.append("dateFilter", dateFilter);
-      if (dateFrom) params.append("dateFrom", dateFrom);
-      if (dateTo) params.append("dateTo", dateTo);
+    const params = new URLSearchParams();
 
-      const url = `https://meetup-backend-my4m.onrender.com/meetups?${params.toString()}`;
+    if (search.trim()) params.append("search", search.trim());
+    if (dateFilter) params.append("dateFilter", dateFilter);
+    if (dateFrom) params.append("dateFrom", dateFrom); // YYYY-MM-DD funkar i SQL
+    if (dateTo) params.append("dateTo", dateTo);
 
-      const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+    const url = `https://meetup-backend-my4m.onrender.com/meetups?${params.toString()}`;
 
-      if (!res.ok) throw new Error("Failed to fetch meetups");
-      const data = await res.json();
-      setMeetups(data);
-    } catch (err) {
-      console.error("Error loading meetups:", err);
-      setError("Could not load meetups.");
-    } finally {
-      setLoading(false);
+    
+
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("Backend error:", text);
+      throw new Error("Failed to fetch meetups");
     }
+
+    const data = await res.json();
+    setMeetups(data);
+  } catch (err) {
+    console.error("Error loading meetups:", err);
+    setError("Could not load meetups.");
+  } finally {
+    setLoading(false);
   }
+}
+
+
 
   function handleFilterSubmit(e) {
     e.preventDefault();
@@ -88,7 +97,7 @@ export default function MeetupsPage() {
       <form onSubmit={handleFilterSubmit} className="filter-bar">
         <input
           type="text"
-          placeholder="Search meetups..."
+          placeholder="Title, city "
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -126,7 +135,7 @@ export default function MeetupsPage() {
             <h2>{m.title}</h2>
             <p className="location">📍 {m.location}</p>
             <p className="datetime">
-              {m.date} — {m.time}
+              {m.date.split("T")[0]} — {m.time.slice(0, 5)}
             </p>
 
             <div className="buttons">
