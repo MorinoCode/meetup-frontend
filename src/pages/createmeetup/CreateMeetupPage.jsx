@@ -9,6 +9,7 @@ export default function CreateMeetupPage() {
   const [location, setLocation] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [capacity, setCapacity] = useState(""); // 🆕 nytt fält
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -34,7 +35,8 @@ export default function CreateMeetupPage() {
           location,
           date,
           time,
-          host_id: userId, // nytt fält i backend
+          capacity: Number(capacity), // 🆕 skickas med i body
+          host_id: userId,
         }),
       });
 
@@ -105,6 +107,19 @@ export default function CreateMeetupPage() {
             />
           </label>
         </div>
+
+        
+        <label>
+          Capacity (number of spots):
+          <input
+            type="number"
+            min="1"
+            value={capacity}
+            onChange={(e) => setCapacity(e.target.value)}
+            placeholder="Enter max number of attendees"
+            required
+          />
+        </label>
 
         {error && <p className="error">{error}</p>}
 
