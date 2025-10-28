@@ -94,24 +94,20 @@ export default function MeetupsPage() {
       if (isJoined) {
         alert("❎ You have unregistered from this meetup.");
         setJoinedMeetups((prev) => prev.filter((id) => id !== meetupId));
-
-        // uppdatera antal deltagare lokalt (öka +1)
         setMeetups((prev) =>
           prev.map((m) =>
             m.id === meetupId
-              ? { ...m, attendees_count: m.attendees_count - 1 }
+              ? { ...m, attendees_count: (m.attendees_count || 1) - 1 }
               : m
           )
         );
       } else {
         alert("✅ You have joined this meetup!");
         setJoinedMeetups((prev) => [...prev, meetupId]);
-
-        // uppdatera antal deltagare lokalt (minska -1)
         setMeetups((prev) =>
           prev.map((m) =>
             m.id === meetupId
-              ? { ...m, attendees_count: m.attendees_count + 1 }
+              ? { ...m, attendees_count: (m.attendees_count || 0) + 1 }
               : m
           )
         );
@@ -167,8 +163,12 @@ export default function MeetupsPage() {
 
       <div className="meetup-list">
         {meetups.map((m) => {
-          const spotsLeft = m.capacity - m.attendees_count;
           const isJoined = joinedMeetups.includes(m.id);
+          const meetupDate = new Date(m.date);
+          const isPast = meetupDate < new Date();
+          const attendees = m.attendees_count || 0;
+          const capacity = m.capacity || 10;
+          const spotsLeft = capacity - attendees;
           const isFull = spotsLeft <= 0;
 
           return (
@@ -179,7 +179,6 @@ export default function MeetupsPage() {
                 {m.date.split("T")[0]} — {m.time.slice(0, 5)}
               </p>
 
-              {/* 🪑 Visa platser */}
               <p className={`spots ${isFull ? "full" : ""}`}>
                 {isFull ? "❌ Full" : `🪑 ${spotsLeft} spots left`}
               </p>
@@ -189,22 +188,39 @@ export default function MeetupsPage() {
                   Read More
                 </button>
 
-                {isJoined ? (
-                  <button
-                    className="joined-btn unregister"
-                    onClick={() => handleAttend(m.id)}
-                  >
-                    ❎ Unregister
-                  </button>
-                ) : (
-                  <button
-                    disabled={isFull}
-                    onClick={() => handleAttend(m.id)}
-                    className={isFull ? "disabled" : ""}
-                  >
-                    {isFull ? "Full" : "Join"}
-                  </button>
-                )}
+                {(() => {
+                  if (isJoined && isPast) {
+                    return (
+                      <button
+                        className="review-btn"
+                        onClick={() => navigate(`/meetup/${m.id}`)}
+                      >
+                        ⭐ Review
+                      </button>
+                    );
+                  }
+
+                  if (isJoined) {
+                    return (
+                      <button
+                        className="joined-btn unregister"
+                        onClick={() => handleAttend(m.id)}
+                      >
+                        ❎ Unregister
+                      </button>
+                    );
+                  }
+
+                  return (
+                    <button
+                      disabled={isFull}
+                      onClick={() => handleAttend(m.id)}
+                      className={isFull ? "disabled" : ""}
+                    >
+                      {isFull ? "Full" : "Join"}
+                    </button>
+                  );
+                })()}
               </div>
             </div>
           );
