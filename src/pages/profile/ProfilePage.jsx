@@ -65,8 +65,8 @@ export default function ProfilePage() {
       <div className="profile-header">
         <h1>My Profile</h1>
         <div className="user-info">
-          <p><strong>Username:</strong> {profile.username}</p>
-          <p><strong>Email:</strong> {profile.email}</p>
+          <p><strong>Username: </strong> {profile.username}</p>
+          <p><strong>Email: </strong> {profile.email}</p>
         </div>
       </div>
 

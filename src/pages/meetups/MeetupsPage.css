@@ -113,3 +113,23 @@ h1 {
   color: #dc2626;
   text-align: center;
 }
+.host {
+  font-style: italic;
+  color: #555;
+  margin-top: 4px;
+}
+.spots {
+  font-weight: 500;
+  color: #333;
+  margin: 5px 0;
+}
+
+.spots.full {
+  color: #d9534f;
+  font-weight: bold;
+}
+
+button.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

@@ -5,6 +5,7 @@
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  min-height: 80vh;
 }
 
 .profile-header {
@@ -14,10 +15,14 @@
 
 .user-info {
   background: white;
+  border: 2px solid black;
   padding: 1rem;
   border-radius: 8px;
   margin-top: 1rem;
   display: inline-block;
+  p{
+    padding: 10px 0;
+  }
 }
 
 .meetup-section {
