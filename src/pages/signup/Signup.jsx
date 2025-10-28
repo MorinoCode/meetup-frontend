@@ -26,7 +26,7 @@ export default function Signup() {
 
       const data = await res.json();
 
-      if (data && data.email) {
+      if (data) {
         setMessage("✅ Account created successfully! Redirecting...");
         // wait 1 second before redirecting
         setTimeout(() => {
