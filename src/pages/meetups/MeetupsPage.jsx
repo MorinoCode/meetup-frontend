@@ -15,34 +15,26 @@ export default function MeetupsPage() {
 
   useEffect(() => {
     fetchMeetups();
+    fetchJoinedMeetups(); // 👈 kolla användarens anmälda meetups
   }, []);
 
   async function fetchMeetups() {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-
       const params = new URLSearchParams();
 
-      // ✅ matcha backend param-namn
       if (search.trim()) params.append("search", search.trim());
       if (dateFilter) params.append("date_filter", dateFilter);
       if (dateFrom) params.append("date_from", dateFrom);
       if (dateTo) params.append("date_to", dateTo);
 
       const url = `https://meetup-backend-my4m.onrender.com/meetups?${params.toString()}`;
-      console.log("🔍 Fetching meetups from:", url);
-
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (!res.ok) {
-        const text = await res.text();
-        console.error("Backend error:", text);
-        throw new Error("Failed to fetch meetups");
-      }
-
+      if (!res.ok) throw new Error("Failed to fetch meetups");
       const data = await res.json();
       setMeetups(data);
     } catch (err) {
@@ -50,6 +42,24 @@ export default function MeetupsPage() {
       setError("Could not load meetups.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  // 👇 Hämta användarens anmälda meetups
+  async function fetchJoinedMeetups() {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("https://meetup-backend-my4m.onrender.com/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const joinedIds = data.history.map((m) => m.meetup_id);
+        setJoinedMeetups(joinedIds);
+      }
+    } catch (err) {
+      console.error("Error loading joined meetups:", err);
     }
   }
 
@@ -99,10 +109,7 @@ export default function MeetupsPage() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <select
-          value={dateFilter}
-          onChange={(e) => setDateFilter(e.target.value)}
-        >
+        <select value={dateFilter} onChange={(e) => setDateFilter(e.target.value)}>
           <option value="">All Dates</option>
           <option value="upcoming">Upcoming</option>
           <option value="past">Past</option>
@@ -113,13 +120,11 @@ export default function MeetupsPage() {
           value={dateFrom}
           onChange={(e) => setDateFrom(e.target.value)}
         />
-
         <input
           type="date"
           value={dateTo}
           onChange={(e) => setDateTo(e.target.value)}
         />
-
         <button type="submit">Apply Filters</button>
       </form>
 
@@ -140,10 +145,7 @@ export default function MeetupsPage() {
             </p>
 
             <div className="buttons">
-              <button onClick={() => navigate(`/meetup/${m.id}`)}>
-                Read More
-              </button>
-
+              <button onClick={() => navigate(`/meetup/${m.id}`)}>Read More</button>
               {joinedMeetups.includes(m.id) ? (
                 <button
                   className="joined-btn unregister"
