@@ -1,4 +1,3 @@
-// src/pages/meetups/MeetupsPage.jsx
 import "./MeetupsPage.css";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -19,42 +18,40 @@ export default function MeetupsPage() {
   }, []);
 
   async function fetchMeetups() {
-  try {
-    setLoading(true);
-    const token = localStorage.getItem("token");
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
 
-    const params = new URLSearchParams();
+      const params = new URLSearchParams();
 
-    if (search.trim()) params.append("search", search.trim());
-    if (dateFilter) params.append("dateFilter", dateFilter);
-    if (dateFrom) params.append("dateFrom", dateFrom); // YYYY-MM-DD funkar i SQL
-    if (dateTo) params.append("dateTo", dateTo);
+      // ✅ matcha backend param-namn
+      if (search.trim()) params.append("search", search.trim());
+      if (dateFilter) params.append("date_filter", dateFilter);
+      if (dateFrom) params.append("date_from", dateFrom);
+      if (dateTo) params.append("date_to", dateTo);
 
-    const url = `https://meetup-backend-my4m.onrender.com/meetups?${params.toString()}`;
+      const url = `https://meetup-backend-my4m.onrender.com/meetups?${params.toString()}`;
+      console.log("🔍 Fetching meetups from:", url);
 
-    
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    const res = await fetch(url, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("Backend error:", text);
+        throw new Error("Failed to fetch meetups");
+      }
 
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("Backend error:", text);
-      throw new Error("Failed to fetch meetups");
+      const data = await res.json();
+      setMeetups(data);
+    } catch (err) {
+      console.error("Error loading meetups:", err);
+      setError("Could not load meetups.");
+    } finally {
+      setLoading(false);
     }
-
-    const data = await res.json();
-    setMeetups(data);
-  } catch (err) {
-    console.error("Error loading meetups:", err);
-    setError("Could not load meetups.");
-  } finally {
-    setLoading(false);
   }
-}
-
-
 
   function handleFilterSubmit(e) {
     e.preventDefault();
@@ -97,7 +94,7 @@ export default function MeetupsPage() {
       <form onSubmit={handleFilterSubmit} className="filter-bar">
         <input
           type="text"
-          placeholder="Title, city "
+          placeholder="Title or city..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -128,6 +125,10 @@ export default function MeetupsPage() {
 
       {loading && <p>Loading meetups...</p>}
       {error && <p className="error">{error}</p>}
+
+      {!loading && meetups.length === 0 && (
+        <p className="no-meetups">No meetups found for your filters.</p>
+      )}
 
       <div className="meetup-list">
         {meetups.map((m) => (

@@ -11,7 +11,6 @@ export default function ProfilePage() {
 
   useEffect(() => {
     fetchProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchProfile() {
@@ -22,7 +21,6 @@ export default function ProfilePage() {
       });
 
       if (!res.ok) throw new Error("Failed to load profile");
-
       const data = await res.json();
       setProfile(data);
     } catch (err) {
@@ -46,7 +44,7 @@ export default function ProfilePage() {
 
       if (res.ok) {
         alert("You have unregistered from this meetup.");
-        fetchProfile(); // Refresh profile after unregistering
+        fetchProfile(); // refresh profile
       } else {
         alert("Failed to unregister. Try again.");
       }
@@ -80,15 +78,17 @@ export default function ProfilePage() {
             {upcoming.map((m) => (
               <div key={m.meetup_id} className="meetup-card">
                 <h3>{m.title}</h3>
-                <p>📅 {m.date}</p>
-
+                <p>📅 {m.date.split("T")[0]}</p>
                 <div className="buttons">
                   <button onClick={() => navigate(`/meetup/${m.meetup_id}`)}>
                     Read More
                   </button>
-                  <button onClick={() => handleUnregister(m.meetup_id)}>
-                    ❎ Unregister
-                  </button>
+                  {/* ✅ disable unregister if date passed */}
+                  {new Date(m.date) >= today && (
+                    <button onClick={() => handleUnregister(m.meetup_id)}>
+                      ❎ Unregister
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -106,13 +106,21 @@ export default function ProfilePage() {
             {past.map((m) => (
               <div key={m.meetup_id} className="meetup-card">
                 <h3>{m.title}</h3>
-                <p>📅 {m.date}</p>
+                <p>📅 {m.date.split("T")[0]}</p>
                 {m.rating && <p>⭐ {m.rating}/5</p>}
                 {m.comment && <p className="comment">💬 "{m.comment}"</p>}
 
                 <div className="buttons">
                   <button onClick={() => navigate(`/meetup/${m.meetup_id}`)}>
                     Read More
+                  </button>
+
+                  {/* ✅ Show Rate & Review button for past meetups */}
+                  <button
+                    className="review-btn"
+                    onClick={() => navigate(`/meetup/${m.meetup_id}`)}
+                  >
+                    ⭐ Rate & Review
                   </button>
                 </div>
               </div>

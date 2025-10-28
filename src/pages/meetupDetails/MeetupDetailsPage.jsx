@@ -13,12 +13,11 @@ export default function MeetupDetailsPage() {
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
-  const [userReviewId, setUserReviewId] = useState(null); // track user's review
+  const [userReviewId, setUserReviewId] = useState(null);
 
   useEffect(() => {
     fetchMeetupDetails();
     fetchReviews();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   async function fetchMeetupDetails() {
@@ -26,13 +25,10 @@ export default function MeetupDetailsPage() {
       const token = localStorage.getItem("token");
       const res = await fetch(
         `https://meetup-backend-my4m.onrender.com/meetups/${id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (!res.ok) throw new Error("Failed to load meetup details");
-
       const data = await res.json();
       setMeetup(data);
 
@@ -53,19 +49,14 @@ export default function MeetupDetailsPage() {
       const token = localStorage.getItem("token");
       const res = await fetch(
         `https://meetup-backend-my4m.onrender.com/meetups/${id}/review`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       if (res.ok) {
         const data = await res.json();
         setReviews(data);
 
-        // check if user already has a review
-        const userId = localStorage.getItem("userId");
-        const existing = data.find(
-          (r) => String(r.reviewer_username) === localStorage.getItem("username")
-        );
+        const username = localStorage.getItem("username");
+        const existing = data.find((r) => r.reviewer_username === username);
         if (existing) {
           setUserReviewId(existing.id);
           setRating(existing.rating);
@@ -78,35 +69,33 @@ export default function MeetupDetailsPage() {
   }
 
   async function handleAttend() {
-  const token = localStorage.getItem("token");
-  try {
-    const res = await fetch(
-      `https://meetup-backend-my4m.onrender.com/meetups/${id}/attend`,
-      {
-        method: joined ? "DELETE" : "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(
+        `https://meetup-backend-my4m.onrender.com/meetups/${id}/attend`,
+        {
+          method: joined ? "DELETE" : "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-    const data = await res.json();
-
-    if (!res.ok) {
-      if (data.message === "This meetup is full.") {
-        alert("❌ This meetup is full, you cannot join.");
-      } else {
-        alert("❌ Could not sign up. Please try again.");
+      const data = await res.json();
+      if (!res.ok) {
+        if (data.message === "This meetup is full.") {
+          alert("❌ This meetup is full, you cannot join.");
+        } else {
+          alert("❌ Could not sign up. Please try again.");
+        }
+        return;
       }
-      return;
+
+      alert(joined ? "❎ You have unregistered." : "✅ You have joined this meetup!");
+      setJoined(!joined);
+      fetchMeetupDetails();
+    } catch (err) {
+      console.error("Attend error:", err);
     }
-
-    alert(joined ? "❎ You have unregistered." : "✅ You have joined this meetup!");
-    setJoined(!joined);
-    fetchMeetupDetails();
-  } catch (err) {
-    console.error("Attend error:", err);
   }
-}
-
 
   async function handleSubmitReview(e) {
     e.preventDefault();
@@ -144,8 +133,9 @@ export default function MeetupDetailsPage() {
 
   const meetupDate = new Date(meetup.date);
   const now = new Date();
-  const canReview = joined && meetupDate < now; // only past meetups you attended
+  const isPast = meetupDate < now;
 
+  const canReview = joined && isPast;
   const userHasReview = reviews.some(
     (r) => r.reviewer_username === localStorage.getItem("username")
   );
@@ -172,11 +162,17 @@ export default function MeetupDetailsPage() {
         )}
       </div>
 
+      {/* ✅ Disable Join/Unregister button for past meetups */}
       <button
         className={joined ? "unregister-btn" : "join-btn"}
         onClick={handleAttend}
+        disabled={isPast}
       >
-        {joined ? "❎ Unregister" : "Join Meetup"}
+        {isPast
+          ? "⏰ Meetup has passed"
+          : joined
+          ? "❎ Unregister"
+          : "Join Meetup"}
       </button>
 
       {/* ⭐ Reviews Section */}
@@ -196,6 +192,7 @@ export default function MeetupDetailsPage() {
         )}
       </div>
 
+      {/* ✅ Show Rate & Review button only if attended and date has passed */}
       {canReview && (
         <div className="review-form-container">
           {!showReviewForm ? (
@@ -212,7 +209,9 @@ export default function MeetupDetailsPage() {
                 >
                   <option value="0">Select</option>
                   {[1, 2, 3, 4, 5].map((n) => (
-                    <option key={n} value={n}>{n}</option>
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
                   ))}
                 </select>
               </label>

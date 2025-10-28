@@ -16,11 +16,14 @@ export default function Login() {
     setMessage("");
 
     try {
-      const res = await fetch("https://meetup-backend-my4m.onrender.com/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const res = await fetch(
+        "https://meetup-backend-my4m.onrender.com/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       const data = await res.json();
 
@@ -28,6 +31,8 @@ export default function Login() {
 
       // save token and redirect
       localStorage.setItem("token", data.token);
+      localStorage.setItem("userId", data.user.id);
+      localStorage.setItem("username", data.user.username);
       setMessage("✅ Login successful! Redirecting...");
       setTimeout(() => {
         navigate("/allmeetup");
