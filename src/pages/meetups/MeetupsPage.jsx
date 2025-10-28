@@ -136,29 +136,46 @@ export default function MeetupsPage() {
       )}
 
       <div className="meetup-list">
-        {meetups.map((m) => (
-          <div key={m.id} className="meetup-card">
-            <h2>{m.title}</h2>
-            <p className="location">📍 {m.location}</p>
-            <p className="datetime">
-              {m.date.split("T")[0]} — {m.time.slice(0, 5)}
-            </p>
+        {meetups.map((m) => {
+          const meetupDate = new Date(m.date);
+          const hasPassed = meetupDate < new Date();
+          const isJoined = joinedMeetups.includes(m.id);
 
-            <div className="buttons">
-              <button onClick={() => navigate(`/meetup/${m.id}`)}>Read More</button>
-              {joinedMeetups.includes(m.id) ? (
-                <button
-                  className="joined-btn unregister"
-                  onClick={() => handleAttend(m.id)}
-                >
-                  ❎ Unregister
-                </button>
-              ) : (
-                <button onClick={() => handleAttend(m.id)}>Join</button>
-              )}
+          return (
+            <div key={m.id} className="meetup-card">
+              <h2>{m.title}</h2>
+              <p className="location">📍 {m.location}</p>
+              <p className="datetime">
+                {m.date.split("T")[0]} — {m.time.slice(0, 5)}
+              </p>
+
+              <div className="buttons">
+                <button onClick={() => navigate(`/meetup/${m.id}`)}>Read More</button>
+
+                {/* 🧠 Logik för knapp */}
+                {isJoined ? (
+                  hasPassed ? (
+                    <button
+                      className="review-btn"
+                      onClick={() => navigate(`/meetup/${m.id}`)}
+                    >
+                      ⭐ Rate & Review
+                    </button>
+                  ) : (
+                    <button
+                      className="joined-btn unregister"
+                      onClick={() => handleAttend(m.id)}
+                    >
+                      ❎ Unregister
+                    </button>
+                  )
+                ) : (
+                  <button onClick={() => handleAttend(m.id)}>Join</button>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
