@@ -3,3 +3,6 @@
   margin: 0;
   box-sizing: border-box;
 }
+body{
+  background: linear-gradient(135deg, #021024, #04364a, #0b7a75)
+}

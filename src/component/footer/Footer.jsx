@@ -9,8 +9,8 @@ export default function Footer() {
         <p>© {year} Meetup App. All rights reserved.</p>
         <div className="footer-links">
           <a href="/">Home</a>
-          <a href="/about">About</a>
-          <a href="#">Privacy Policy</a>
+          <a href="/t">About</a>
+          <a href="/">Privacy Policy</a>
         </div>
       </div>
     </footer>

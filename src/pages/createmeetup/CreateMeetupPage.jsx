@@ -1,4 +1,3 @@
-// src/pages/createmeetup/CreateMeetupPage.jsx
 import "./CreateMeetupPage.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -9,7 +8,7 @@ export default function CreateMeetupPage() {
   const [location, setLocation] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [capacity, setCapacity] = useState(""); // 🆕 nytt fält
+  const [capacity, setCapacity] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -21,7 +20,7 @@ export default function CreateMeetupPage() {
 
     try {
       const token = localStorage.getItem("token");
-      const userId = localStorage.getItem("userId"); // används för host
+      const userId = localStorage.getItem("userId");
 
       const res = await fetch("https://meetup-backend-my4m.onrender.com/meetups", {
         method: "POST",
@@ -35,7 +34,7 @@ export default function CreateMeetupPage() {
           location,
           date,
           time,
-          capacity: Number(capacity), // 🆕 skickas med i body
+          capacity: Number(capacity),
           host_id: userId,
         }),
       });
@@ -53,10 +52,10 @@ export default function CreateMeetupPage() {
   }
 
   return (
-    <div className="create-meetup-page">
-      <h1>Create New Meetup</h1>
+    <div className="create-meetup-container">
+      <form className="create-meetup-card" onSubmit={handleSubmit}>
+        <h1>Create New Meetup</h1>
 
-      <form className="create-meetup-form" onSubmit={handleSubmit}>
         <label>
           Title:
           <input
@@ -64,6 +63,7 @@ export default function CreateMeetupPage() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
+            placeholder="Enter meetup title"
           />
         </label>
 
@@ -83,6 +83,7 @@ export default function CreateMeetupPage() {
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             required
+            placeholder="City or venue name"
           />
         </label>
 
@@ -108,7 +109,6 @@ export default function CreateMeetupPage() {
           </label>
         </div>
 
-        
         <label>
           Capacity (number of spots):
           <input

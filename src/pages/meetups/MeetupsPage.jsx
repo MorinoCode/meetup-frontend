@@ -35,22 +35,19 @@ export default function MeetupsPage() {
       });
 
       if (!res.ok) throw new Error("Failed to fetch meetups");
-
       const data = await res.json();
 
-      // ✅ اضافه کردن فیلتر فرانت‌اند برای category
+      // ✅ فیلتر جستجو (title + desc + location + category)
       if (search.trim()) {
         const term = search.toLowerCase();
-
         const filtered = data.filter((m) => {
           return (
             m.title?.toLowerCase().includes(term) ||
             m.description?.toLowerCase().includes(term) ||
             m.location?.toLowerCase().includes(term) ||
-            m.category?.toLowerCase().includes(term) // 👈 اضافه شده
+            m.category?.toLowerCase().includes(term)
           );
         });
-
         setMeetups(filtered);
       } else {
         setMeetups(data);
@@ -139,7 +136,7 @@ export default function MeetupsPage() {
     <div className="meetups-page">
       <h1>All Meetups</h1>
 
-      {/* 🔍 Search & Filters */}
+      {/* 🔍 Filter Bar */}
       <form onSubmit={handleFilterSubmit} className="filter-bar">
         <input
           type="text"
@@ -173,7 +170,6 @@ export default function MeetupsPage() {
 
       {loading && <p>Loading meetups...</p>}
       {error && <p className="error">{error}</p>}
-
       {!loading && meetups.length === 0 && (
         <p className="no-meetups">No meetups found for your filters.</p>
       )}
@@ -191,11 +187,19 @@ export default function MeetupsPage() {
           return (
             <div key={m.id} className="meetup-card">
               <h2>{m.title}</h2>
-              <p className="location">📍 {m.location}</p>
               {m.category && <p className="category">🏷️ {m.category}</p>}
-              <p className="datetime">
-                {m.date.split("T")[0]} — {m.time.slice(0, 5)}
-              </p>
+
+              
+
+              <div className="details">
+                <p><strong>📅 Date:</strong> {m.date.split("T")[0]}</p>
+                <p><strong>🕒 Time:</strong> {m.time?.slice(0, 5)}</p>
+                <p><strong>📍 Location:</strong> {m.location}</p>
+                {m.host_name && (
+                  <p><strong>👤 Host:</strong> {m.host_name}</p>
+                )}
+                <p><strong>🪑 Capacity:</strong> {attendees}/{capacity}</p>
+              </div>
 
               <p className={`spots ${isFull ? "full" : ""}`}>
                 {isFull ? "❌ Full" : `🪑 ${spotsLeft} spots left`}

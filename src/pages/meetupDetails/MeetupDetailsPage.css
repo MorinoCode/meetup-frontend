@@ -1,39 +1,192 @@
 .meetup-details {
-  max-width: 800px;
-  margin: 2rem auto;
-  background: #fff;
+  max-width: 850px;
+  margin: 2.5rem auto;
+  background: linear-gradient(145deg, #f9fafb, #e9f0ff);
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  font-family: "Inter", sans-serif;
+  color: #1e293b;
+}
+
+.details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.details-header h1 {
+  font-size: 1.9rem;
+  color: #1e3a8a;
+  margin-bottom: 1rem;
+}
+
+.badge {
+  background: #10b981;
+  color: white;
+  padding: 0.4rem 0.8rem;
   border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .meta {
-  color: #666;
+  background: #ffffff;
+  border-left: 5px solid #1e3a8a;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  line-height: 1.7;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.description {
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  color: #334155;
+  background: #f9fafb;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #10b981;
+}
+
+.reviews-section {
+  margin-top: 2rem;
+}
+
+.reviews-section h2 {
+  font-size: 1.4rem;
+  color: #1e3a8a;
   margin-bottom: 1rem;
 }
 
 .review-card {
-  background: #f9f9f9;
-  border-left: 4px solid #007bff;
+  background: white;
+  border-left: 4px solid #10b981;
   padding: 1rem;
   margin-bottom: 1rem;
-  border-radius: 6px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
+.review-author {
+  color: #1e3a8a;
+  font-weight: 600;
+}
+
+.review-text {
+  margin-top: 0.3rem;
+  color: #334155;
+}
+
+/* 🎯 Review Form */
 .review-form {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
+  text-align: center;
 }
 
-.review-form textarea {
-  width: 100%;
-  height: 80px;
-  margin-top: 0.5rem;
+.review-btn {
+  background-color: #10b981;
+  color: white;
+  padding: 0.7rem 1.4rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: 600;
+}
+
+.review-btn:hover {
+  background-color: #059669;
+}
+
+.form-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.form-card label {
+  display: block;
   margin-bottom: 1rem;
-  padding: 0.5rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  font-weight: 600;
 }
 
-.review-form button {
-  margin-right: 0.5rem;
+.form-card select,
+.form-card textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.6rem;
+  font-size: 1rem;
+  margin-top: 0.4rem;
+}
+
+.form-card textarea {
+  min-height: 100px;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.form-buttons button {
+  background: #1e3a8a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.form-buttons button:hover {
+  background: #153172;
+}
+
+.form-buttons button[type="button"] {
+  background: #e5e7eb;
+  color: #1e293b;
+}
+
+.form-buttons button[type="button"]:hover {
+  background: #cbd5e1;
+}
+/* 👥 Attendees Section */
+.attendees-section {
+  margin-top: 2rem;
+}
+
+.attendees-section h2 {
+  font-size: 1.4rem;
+  color: #1e3a8a;
+  margin-bottom: 1rem;
+}
+
+.attendee-list {
+  list-style: none;
+  padding: 0;
+  background: #f9fafb;
+  border-radius: 10px;
+  border-left: 4px solid #10b981;
+  padding: 1rem;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.attendee-item {
+  padding: 0.5rem 0.8rem;
+  margin: 0.3rem 0;
+  border-bottom: 1px solid #e2e8f0;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.attendee-item:last-child {
+  border-bottom: none;
 }
