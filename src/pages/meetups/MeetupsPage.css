@@ -1,135 +1,190 @@
-/* src/pages/meetups/MeetupsPage.css */
-
 .meetups-page {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 2rem;
-  min-height: 90vh;
-  background: #f9fafb;
+  color: #222;
+  font-family: "Inter", sans-serif;
 }
 
-h1 {
+.meetups-page h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
   text-align: center;
-  margin-bottom: 1rem;
-  color: #111827;
 }
 
-/* 🔍 Filter bar */
+/* 🔍 Filter Bar */
 .filter-bar {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 0.8rem;
+  justify-content: center;
   margin-bottom: 2rem;
 }
 
 .filter-bar input,
-.filter-bar select {
-  padding: 0.6rem;
-  border: 1px solid #d1d5db;
+.filter-bar select,
+.filter-bar button {
+  padding: 0.6rem 1rem;
   border-radius: 8px;
-  font-size: 1rem;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.filter-bar input:focus,
+.filter-bar select:focus {
+  outline: none;
+  border-color: #0077ff;
+  box-shadow: 0 0 4px #0077ff44;
 }
 
 .filter-bar button {
-  background: #3b82f6;
+  background-color: #0077ff;
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 0.6rem 1.2rem;
   cursor: pointer;
+  font-weight: 500;
 }
 
 .filter-bar button:hover {
-  background: #2563eb;
+  background-color: #005fd1;
 }
 
+/* 🧩 Meetup List */
 .meetup-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
 }
 
+/* 📦 Meetup Card */
 .meetup-card {
   background: white;
-  border-radius: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 14px;
   padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: transform 0.2s;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  transition: all 0.25s ease;
+  position: relative;
 }
 
 .meetup-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-5px);
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.1);
 }
 
 .meetup-card h2 {
-  color: #111827;
-  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+  margin-bottom: 0.4rem;
+  color: #222;
 }
 
-.location,
-.datetime {
-  color: #4b5563;
+.meetup-card .location {
+  color: #444;
   font-size: 0.95rem;
   margin-bottom: 0.3rem;
 }
 
-.buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1rem;
+/* 🏷️ Category Badge */
+.meetup-card .category {
+  display: inline-block;
+  background-color: #0077ff15;
+  color: #0077ff;
+  font-weight: 600;
+  padding: 0.25rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  margin-bottom: 0.6rem;
 }
 
-.buttons button {
-  background: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 0.5rem 0.8rem;
-  cursor: pointer;
-  transition: background 0.3s;
+/* 🗓️ Date & Time */
+.meetup-card .datetime {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
 }
 
-.buttons button:hover {
-  background: #2563eb;
-}
-
-.joined-btn {
-  background: #10b981;
-  cursor: not-allowed;
-}
-
-.unregister {
-  background: #ef4444;
-  cursor: pointer;
-}
-
-.unregister:hover {
-  background: #dc2626;
-}
-
-.error {
-  color: #dc2626;
-  text-align: center;
-}
-.host {
-  font-style: italic;
-  color: #555;
-  margin-top: 4px;
-}
+/* 🪑 Spots */
 .spots {
+  margin: 0.5rem 0 1rem;
+  font-size: 0.9rem;
   font-weight: 500;
-  color: #333;
-  margin: 5px 0;
+  color: #0b8e3c;
 }
 
 .spots.full {
-  color: #d9534f;
-  font-weight: bold;
+  color: #d63b3b;
 }
 
-button.disabled {
+/* 🔘 Buttons Section */
+.meetup-card .buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.meetup-card button {
+  flex: 1;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.meetup-card button:hover {
+  transform: translateY(-2px);
+}
+
+.meetup-card button:active {
+  transform: scale(0.97);
+}
+
+/* Primary Button */
+.meetup-card button:not(.joined-btn):not(.unregister):not(.review-btn) {
+  background-color: #0077ff;
+  color: white;
+}
+
+.meetup-card button.disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+/* Unregister Button */
+.joined-btn.unregister {
+  background-color: #ff4d4d;
+  color: white;
+}
+
+/* Review Button */
+.review-btn {
+  background-color: #ffc107;
+  color: #222;
+}
+
+/* 🕓 Loading & Error */
+.loading,
+.error,
+.no-meetups {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1.1rem;
+}
+
+.error {
+  color: red;
+}
+
+/* Responsive Tweaks */
+@media (max-width: 600px) {
+  .filter-bar {
+    flex-direction: column;
+  }
+
+  .filter-bar input,
+  .filter-bar select,
+  .filter-bar button {
+    width: 100%;
+  }
 }
