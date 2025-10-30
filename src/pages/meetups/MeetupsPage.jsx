@@ -37,7 +37,24 @@ export default function MeetupsPage() {
       if (!res.ok) throw new Error("Failed to fetch meetups");
 
       const data = await res.json();
-      setMeetups(data);
+
+      // ✅ اضافه کردن فیلتر فرانت‌اند برای category
+      if (search.trim()) {
+        const term = search.toLowerCase();
+
+        const filtered = data.filter((m) => {
+          return (
+            m.title?.toLowerCase().includes(term) ||
+            m.description?.toLowerCase().includes(term) ||
+            m.location?.toLowerCase().includes(term) ||
+            m.category?.toLowerCase().includes(term) // 👈 اضافه شده
+          );
+        });
+
+        setMeetups(filtered);
+      } else {
+        setMeetups(data);
+      }
     } catch (err) {
       console.error("Error loading meetups:", err);
       setError("Could not load meetups.");
@@ -126,7 +143,7 @@ export default function MeetupsPage() {
       <form onSubmit={handleFilterSubmit} className="filter-bar">
         <input
           type="text"
-          placeholder="Title or city..."
+          placeholder="Search by title, location or category..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -175,6 +192,7 @@ export default function MeetupsPage() {
             <div key={m.id} className="meetup-card">
               <h2>{m.title}</h2>
               <p className="location">📍 {m.location}</p>
+              {m.category && <p className="category">🏷️ {m.category}</p>}
               <p className="datetime">
                 {m.date.split("T")[0]} — {m.time.slice(0, 5)}
               </p>

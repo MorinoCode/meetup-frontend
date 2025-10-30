@@ -1,4 +1,3 @@
-// src/pages/meetupDetails/MeetupDetailsPage.jsx
 import "./MeetupDetailsPage.css";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -6,14 +5,12 @@ import { useParams } from "react-router-dom";
 export default function MeetupDetailsPage() {
   const { id } = useParams();
   const [meetup, setMeetup] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [joined, setJoined] = useState(false);
   const [reviews, setReviews] = useState([]);
-  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [joined, setJoined] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
-  const [userReviewId, setUserReviewId] = useState(null);
 
   useEffect(() => {
     fetchMeetupDetails();
@@ -27,8 +24,6 @@ export default function MeetupDetailsPage() {
         `https://meetup-backend-my4m.onrender.com/meetups/${id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      if (!res.ok) throw new Error("Failed to load meetup details");
       const data = await res.json();
       setMeetup(data);
 
@@ -38,7 +33,6 @@ export default function MeetupDetailsPage() {
       }
     } catch (err) {
       console.error("Error loading details:", err);
-      setError("Could not load meetup details.");
     } finally {
       setLoading(false);
     }
@@ -52,57 +46,17 @@ export default function MeetupDetailsPage() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (res.ok) {
-        const data = await res.json();
-        setReviews(data);
-
-        const username = localStorage.getItem("username");
-        const existing = data.find((r) => r.reviewer_username === username);
-        if (existing) {
-          setUserReviewId(existing.id);
-          setRating(existing.rating);
-          setComment(existing.comment);
-        }
+        setReviews(await res.json());
       }
     } catch (err) {
-      console.error("Error loading reviews:", err);
+      console.error("Error fetching reviews:", err);
     }
   }
 
-  async function handleAttend() {
-    const token = localStorage.getItem("token");
-    try {
-      const res = await fetch(
-        `https://meetup-backend-my4m.onrender.com/meetups/${id}/attend`,
-        {
-          method: joined ? "DELETE" : "POST",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      const data = await res.json();
-      if (!res.ok) {
-        if (data.message === "This meetup is full.") {
-          alert("❌ This meetup is full, you cannot join.");
-        } else {
-          alert("❌ Could not sign up. Please try again.");
-        }
-        return;
-      }
-
-      alert(joined ? "❎ You have unregistered." : "✅ You have joined this meetup!");
-      setJoined(!joined);
-      fetchMeetupDetails();
-    } catch (err) {
-      console.error("Attend error:", err);
-    }
-  }
-
-  async function handleSubmitReview(e) {
+  async function handleReviewSubmit(e) {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      const body = JSON.stringify({ rating, comment });
-
       const res = await fetch(
         `https://meetup-backend-my4m.onrender.com/meetups/${id}/review`,
         {
@@ -111,74 +65,45 @@ export default function MeetupDetailsPage() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body,
+          body: JSON.stringify({ rating, comment }),
         }
       );
-
       if (res.ok) {
-        alert(userReviewId ? "✅ Review updated!" : "✅ Review submitted!");
-        setShowReviewForm(false);
+        alert("✅ Review submitted!");
+        setShowForm(false);
         fetchReviews();
       } else {
         alert("❌ Failed to submit review.");
       }
     } catch (err) {
-      console.error("Review submit error:", err);
+      console.error(err);
     }
   }
 
-  if (loading) return <p className="loading">Loading meetup details...</p>;
-  if (error) return <p className="error">{error}</p>;
-  if (!meetup) return null;
+  if (loading) return <p>Loading...</p>;
+  if (!meetup) return <p>Meetup not found.</p>;
 
   const meetupDate = new Date(meetup.date);
-  const now = new Date();
-  const isPast = meetupDate < now;
-
+  const isPast = meetupDate < new Date();
   const canReview = joined && isPast;
-  const userHasReview = reviews.some(
-    (r) => r.reviewer_username === localStorage.getItem("username")
-  );
 
   return (
     <div className="meetup-details">
       <h1>{meetup.title}</h1>
-      <p className="info">
-        📍 {meetup.location} <br />
-        🗓️ {meetup.date.split("T")[0]} at {meetup.time.slice(0, 5)}
+      <p className="meta">
+        📍 {meetup.location} — 🗓️ {meetup.date.split("T")[0]} at ⏰ {meetup.time.slice(0, 5)}
       </p>
-      <p className="description">{meetup.description}</p>
+      <p>{meetup.description}</p>
 
-      <div className="attendees">
-        <p>
-          👥 <strong>{meetup.attendees?.length || 0}</strong> people attending
-        </p>
-        {meetup.attendees?.length > 0 && (
-          <ul>
-            {meetup.attendees.map((a) => (
-              <li key={a.user_id}>• {a.username}</li>
-            ))}
-          </ul>
-        )}
+      <div className="capacity">
+        Capacity: {meetup.capacity} | Joined: {meetup.attendees?.length || 0}
       </div>
 
-      {/* ✅ Disable Join/Unregister button for past meetups */}
-      <button
-        className={joined ? "unregister-btn" : "join-btn"}
-        onClick={handleAttend}
-        disabled={isPast}
-      >
-        {isPast
-          ? "⏰ Meetup has passed"
-          : joined
-          ? "❎ Unregister"
-          : "Join Meetup"}
-      </button>
-
-      {/* ⭐ Reviews Section */}
-      <div className="reviews-section">
-        <h2>Reviews</h2>
-        {reviews.length > 0 ? (
+      <div className="reviews">
+        <h3>Reviews</h3>
+        {reviews.length === 0 ? (
+          <p>No reviews yet.</p>
+        ) : (
           reviews.map((r) => (
             <div key={r.id} className="review-card">
               <p>
@@ -187,27 +112,21 @@ export default function MeetupDetailsPage() {
               <p>{r.comment}</p>
             </div>
           ))
-        ) : (
-          <p>No reviews yet.</p>
         )}
       </div>
 
-      {/* ✅ Show Rate & Review button only if attended and date has passed */}
       {canReview && (
-        <div className="review-form-container">
-          {!showReviewForm ? (
-            <button onClick={() => setShowReviewForm(true)} className="review-btn">
-              {userHasReview ? "✏️ Edit Review" : "⭐ Rate & Review"}
-            </button>
+        <div className="review-form">
+          {!showForm ? (
+            <button onClick={() => setShowForm(true)}>⭐ Write a Review</button>
           ) : (
-            <form onSubmit={handleSubmitReview} className="review-form">
+            <form onSubmit={handleReviewSubmit}>
               <label>
                 Rating:
                 <select
                   value={rating}
                   onChange={(e) => setRating(Number(e.target.value))}
                 >
-                  <option value="0">Select</option>
                   {[1, 2, 3, 4, 5].map((n) => (
                     <option key={n} value={n}>
                       {n}
@@ -215,25 +134,15 @@ export default function MeetupDetailsPage() {
                   ))}
                 </select>
               </label>
-
               <textarea
-                placeholder="Write your review..."
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-              />
-
-              <div className="review-buttons">
-                <button type="submit">
-                  {userHasReview ? "Update Review" : "Submit Review"}
-                </button>
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => setShowReviewForm(false)}
-                >
-                  Cancel
-                </button>
-              </div>
+                placeholder="Write your thoughts..."
+              ></textarea>
+              <button type="submit">Submit</button>
+              <button type="button" onClick={() => setShowForm(false)}>
+                Cancel
+              </button>
             </form>
           )}
         </div>
