@@ -63,9 +63,12 @@ export default function MeetupsPage() {
   async function fetchJoinedMeetups() {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("https://meetup-backend-my4m.onrender.com/profile", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(
+        "https://meetup-backend-my4m.onrender.com/profile",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       if (res.ok) {
         const data = await res.json();
@@ -97,7 +100,7 @@ export default function MeetupsPage() {
 
       const data = await res.json();
       if (!res.ok) {
-        if (data.message?.includes("full")) {
+        if (data.message?.toLowerCase().includes("full")) {
           alert("❌ This meetup is full!");
         } else {
           alert("❌ Something went wrong.");
@@ -111,7 +114,13 @@ export default function MeetupsPage() {
         setMeetups((prev) =>
           prev.map((m) =>
             m.id === meetupId
-              ? { ...m, attendees_count: (m.attendees_count || 1) - 1 }
+              ? {
+                  ...m,
+                  attendees_count:
+                    (Array.isArray(m.attendees)
+                      ? m.attendees.length
+                      : Number(m.attendees_count) || 1) - 1,
+                }
               : m
           )
         );
@@ -121,7 +130,13 @@ export default function MeetupsPage() {
         setMeetups((prev) =>
           prev.map((m) =>
             m.id === meetupId
-              ? { ...m, attendees_count: (m.attendees_count || 0) + 1 }
+              ? {
+                  ...m,
+                  attendees_count:
+                    (Array.isArray(m.attendees)
+                      ? m.attendees.length
+                      : Number(m.attendees_count) || 0) + 1,
+                }
               : m
           )
         );
@@ -179,8 +194,13 @@ export default function MeetupsPage() {
           const isJoined = joinedMeetups.includes(m.id);
           const meetupDate = new Date(m.date);
           const isPast = meetupDate < new Date();
-          const attendees = m.attendees_count || 0;
-          const capacity = m.capacity || 10;
+
+          // ✅ درست‌ترین روش محاسبه attendees
+          const attendees = Array.isArray(m.attendees)
+            ? m.attendees.length
+            : Number(m.attendees_count) || 0;
+
+          const capacity = Number(m.capacity) || 10;
           const spotsLeft = capacity - attendees;
           const isFull = spotsLeft <= 0;
 
@@ -189,16 +209,24 @@ export default function MeetupsPage() {
               <h2>{m.title}</h2>
               {m.category && <p className="category">🏷️ {m.category}</p>}
 
-              
-
               <div className="details">
-                <p><strong>📅 Date:</strong> {m.date.split("T")[0]}</p>
-                <p><strong>🕒 Time:</strong> {m.time?.slice(0, 5)}</p>
-                <p><strong>📍 Location:</strong> {m.location}</p>
+                <p>
+                  <strong>📅 Date:</strong> {m.date.split("T")[0]}
+                </p>
+                <p>
+                  <strong>🕒 Time:</strong> {m.time?.slice(0, 5)}
+                </p>
+                <p>
+                  <strong>📍 Location:</strong> {m.location}
+                </p>
                 {m.host_name && (
-                  <p><strong>👤 Host:</strong> {m.host_name}</p>
+                  <p>
+                    <strong>👤 Host:</strong> {m.host_name}
+                  </p>
                 )}
-                <p><strong>🪑 Capacity:</strong> {attendees}/{capacity}</p>
+                <p>
+                  <strong>🪑 Capacity:</strong> {attendees}/{capacity}
+                </p>
               </div>
 
               <p className={`spots ${isFull ? "full" : ""}`}>
