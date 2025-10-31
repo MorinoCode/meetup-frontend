@@ -36,7 +36,7 @@ export default function MeetupsPage() {
 
       if (!res.ok) throw new Error("Failed to fetch meetups");
       const data = await res.json();
-
+      console.log(data);
       // ✅ فیلتر جستجو (title + desc + location + category)
       if (search.trim()) {
         const term = search.toLowerCase();
@@ -195,8 +195,8 @@ export default function MeetupsPage() {
                 <p><strong>📅 Date:</strong> {m.date.split("T")[0]}</p>
                 <p><strong>🕒 Time:</strong> {m.time?.slice(0, 5)}</p>
                 <p><strong>📍 Location:</strong> {m.location}</p>
-                {m.host_name && (
-                  <p><strong>👤 Host:</strong> {m.host_name}</p>
+                {m.creator_username && (
+                  <p><strong>👤 Host:</strong> {m.creator_username}</p>
                 )}
                 <p><strong>🪑 Capacity:</strong> {attendees}/{capacity}</p>
               </div>
