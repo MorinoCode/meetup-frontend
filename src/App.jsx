@@ -12,6 +12,7 @@ import ProfilePage from "./pages/profile/ProfilePage";
 import MeetupDetailsPage from "./pages/meetupDetails/MeetupDetailsPage";
 import CreateMeetupPage from "./pages/createmeetup/CreateMeetupPage";
 import Footer from "./component/footer/Footer";
+import MyMeetupsPage from "./pages/mymeetups/MyMeetupsPage";
 
 function App() {
   function PrivateRoute({ children }) {
@@ -61,6 +62,7 @@ function App() {
             </PrivateRoute>
           }
         />
+        <Route path="/mymeetups" element={<MyMeetupsPage />} />
       </Routes>
 
       <Footer />
