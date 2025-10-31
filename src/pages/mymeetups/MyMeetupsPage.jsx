@@ -25,7 +25,6 @@ export default function MyMeetupsPage() {
       if (!res.ok) throw new Error("Failed to fetch meetups");
 
       const data = await res.json();
-      // فقط اون‌هایی که کاربر ساخته
       const myMeetups = data.filter((m) => String(m.creator_id) === String(userId));
       setMeetups(myMeetups);
     } catch (err) {
