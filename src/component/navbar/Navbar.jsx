@@ -56,6 +56,9 @@ export default function Navbar() {
                 <Link to="/profile">My Profile</Link>
               </li>
               <li>
+                <Link to="/mymeetups">My Meetups</Link>
+              </li>
+              <li>
                 <button onClick={handleLogout} className="logout-btn">
                   Logout
                 </button>
