@@ -83,9 +83,10 @@ export default function MyMeetupsPage() {
             <div className="details">
               <p><strong>📅 Date:</strong> {m.date.split("T")[0]}</p>
               <p><strong>🕒 Time:</strong> {m.time?.slice(0, 5)}</p>
-              <p><strong>📍 Location:</strong> {m.location}</p>
-              <p><strong>🪑 Capacity:</strong> {m.capacity}</p>
+              <p><strong>📍 Location:</strong>  {m.location}</p>
+              <p><strong>🪑 Capacity:</strong>  {m.capacity}</p>
               <p><strong>👥 Joined:</strong> {m.attendees_count || 0}</p>
+              <p><strong>🤖 Host:</strong> {m.creator_username || 0}</p>
             </div>
 
             <div className="buttons">
