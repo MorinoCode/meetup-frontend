@@ -36,7 +36,7 @@ export default function MeetupsPage() {
 
       if (!res.ok) throw new Error("Failed to fetch meetups");
       const data = await res.json();
-
+      console.log(data);
       // ✅ فیلتر جستجو (title + desc + location + category)
       if (search.trim()) {
         const term = search.toLowerCase();
