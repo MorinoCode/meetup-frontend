@@ -36,7 +36,6 @@ export default function MeetupsPage() {
 
       if (!res.ok) throw new Error("Failed to fetch meetups");
       const data = await res.json();
-
       if (search.trim()) {
         const term = search.toLowerCase();
         const filtered = data.filter((m) => {
@@ -217,9 +216,9 @@ export default function MeetupsPage() {
                 <p>
                   <strong>📍 Location:</strong> {m.location}
                 </p>
-                {m.host_name && (
+                {m.creator_username && (
                   <p>
-                    <strong>👤 Host:</strong> {m.host_name}
+                    <strong>👤 Host:</strong> {m.creator_username}
                   </p>
                 )}
                 <p>
