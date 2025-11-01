@@ -25,6 +25,7 @@ export default function MeetupDetailsPage() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const data = await res.json();
+      console.log(data);
       setMeetup(data);
 
       const userId = localStorage.getItem("userId");
@@ -98,7 +99,7 @@ export default function MeetupDetailsPage() {
         📍 <strong>Location:</strong> {meetup.location} <br />
         🗓️ <strong>Date:</strong> {meetup.date.split("T")[0]} <br />
         ⏰ <strong>Time:</strong> {meetup.time.slice(0, 5)} <br />
-        👤 <strong>Host:</strong> {meetup.host_name || "Unknown"} <br />
+        👤 <strong>Host:</strong> {meetup.creator.username || "Unknown"} <br />
         🪑 <strong>Capacity:</strong> {meetup.attendees?.length || 0} / {meetup.capacity}
       </p>
 
